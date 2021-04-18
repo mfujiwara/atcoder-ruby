@@ -1,90 +1,29 @@
 import sys
-
-N = 128
-s = "0123456789abcdefghijklmnopqrstuvwxyz"
-word = [['' for i in range(N)] for j in range(128)]
-digit = [0 for i in range(len(s))]
-l = [0 for i in range(len(s))]
-ok = [False for i in range(10)]
-ii = 0
-jj = 0
-carry = 0
-solution = 0
-
-def found():
-    global solution
-    solution += 1
-    for i in range(imax):
-        for j in range(jmax):
-            k = jmax-1-j
-            c = word[i][k]
-            if (c == ''): continue
-            print("%d" % digit[s.index(c)], end='')
-        print()
-
-
-def tr(sum):
-    global ii, jj
-    w = word[ii][jj]
-    c = 0 if w == '' else s.index(w)
-    if (ii < imax-1):
-        ii += 1
-        d = digit[c]
-        if (d < 0):
-            d = l[c]
-            while(d <= 9):
-                if (ok[d]):
-                    digit[c] = d
-                    ok[d] = False
-                    tr(sum+d)
-                    ok[d] = True
-                d += 1
-            digit[c] = -1
-        else:
-            tr(sum+d)
-        ii -= 1
-    else:
-        jj += 1
-        ii = 0
-        carry, d = divmod(sum, 10)
-        if (digit[c] == d):
-            if (jj < jmax):
-                tr(carry)
-            elif (carry == 0):
-                found()
-                exit(0)
-        else:
-            if (digit[c] < 0 and ok[d] and d >= l[c]):
-                digit[c] = d
-                ok[d] = False
-                if (jj < jmax):
-                    tr(carry)
-                elif (carry == 0):
-                    found()
-                    exit(0)
-                digit[c] = -1
-                ok[d] = True
-        jj -= 1
-        ii = imax-1
-
-argv=[input(),input(),input()]
-imax = len(argv)
-jmax = max(map(len, argv))
-
-for i in range(imax):
-    argv[i] = argv[i]
-    l[s.index(argv[i][0])] = 1
-    a = argv[i][-1::-1]
-    for j in range(len(a)):
-        word[i][j] = a[j]
-        c = word[i][j]
-        if (c.isalpha()):
-            digit[s.index(c)] = -1
-        elif (c.isdigit()):
-            digit[s.index(c)] = int(c)
-
-for i in range(10):
-    ok[i] = True
-tr(0)
-if (solution == 0):
+import itertools
+S1=input()
+S2=input()
+S3=input()
+SSS=list(set(S1+S2+S3))
+if len(SSS)>10:
     print("UNSOLVABLE")
+    sys.exit()
+idxs=[[] for _ in range(3)]
+for i,SX in enumerate([S1,S2,S3]):
+    for ch in SX:
+        for j,s in enumerate(SSS):
+            if ch==s:
+                idxs[i].append(j)
+                break
+for perm in itertools.permutations([i for i in range(10)], len(SSS)):
+    n=[0,0,0]
+    if perm[idxs[0][0]]==0 or perm[idxs[1][0]]==0 or perm[idxs[2][0]]==0:
+        continue
+    for i,idx in enumerate(idxs):
+        for j,id in enumerate(idx):
+            n[i]=n[i]*10+perm[id]
+    if n[0]+n[1]==n[2]:
+        print(n[0])
+        print(n[1])
+        print(n[2])
+        sys.exit()
+print("UNSOLVABLE")
