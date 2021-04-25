@@ -1,0 +1,6 @@
+N=int(input())
+a_array=list(map(int, input().split()))
+b_array=list(map(int, input().split()))
+a_max=max(a_array)
+b_min=min(b_array)
+print(max(0,b_min-a_max+1))
