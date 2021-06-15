@@ -1,0 +1,7 @@
+S=input()
+a=S.count("a")
+b=S.count("b")
+c=S.count("c")
+maxi=max(a,b,c)
+mini=min(a,b,c)
+print("YES" if maxi-mini<2 else "NO")
