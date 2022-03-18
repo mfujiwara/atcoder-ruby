@@ -1,0 +1,9 @@
+N=int(input())
+A=int(input())
+B=int(input())
+C=int(input())
+D=int(input())
+E=int(input())
+mini=min(A,B,C,D,E)
+d=(N+mini-1)//mini
+print(d+4)
