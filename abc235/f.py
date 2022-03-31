@@ -14,16 +14,18 @@ for i,c in enumerate(N):
     c=int(c)
     new_dpc=[0]*1024
     new_dps=[0]*1024
+    # 既に上の桁がある場合
     for m in range(1,1024):
         for d in range(10):
-            new_dpc[m|1<<d]+=dpc[m]
-            new_dps[m|1<<d]+=dps[m]*10+dpc[m]*d
-    # この桁から
+            # i番目の桁をdにした場合、
+            new_dpc[m|1<<d]+=dpc[m] # 遷移前の個数を足す
+            new_dps[m|1<<d]+=dps[m]*10+dpc[m]*d # 遷移前の総和x10と今回の総和
+    # この桁から開始の場合
     if i:
         for d in range(1,10):
             new_dpc[1<<d]+=1
             new_dps[1<<d]+=d
-    # 上がSpre
+    # 未満のもの
     for d in range(not i,c):
         new_dpc[digits|1<<d]+=1
         new_dps[digits|1<<d]+=Spre*10+d
