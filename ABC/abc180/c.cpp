@@ -15,7 +15,7 @@ vector<long long> calc_divisors(long long N) {
 }
 
 int main() {
-    int N;
+    long long N;
     cin >> N;
     vector<long long> divs = calc_divisors(N);
     for (int i=0;i<divs.size();i++) {
