@@ -1,55 +1,52 @@
 #include <bits/stdc++.h>
+#include <bits/extc++.h>
+#include <atcoder/all>
 using namespace std;
+using namespace atcoder;
+using namespace __gnu_pbds;
 
-using F = double;
-constexpr F EPS = 1e-10;
-
-struct Point {
-    F x, y;
-    Point() : x(), y() {}
-    Point(const F& x_, const F& y_) : x(x_), y(y_) {}
-    Point operator-(const Point& other) const { return Point(x - other.x, y - other.y); }
-    Point operator*(const F& other) const { return Point(x * other, y * other); }
-    friend F cross(const Point& p, const Point& q) { return p.x * q.y - p.y * q.x; }
-};
+double EPS = 1e-10;
+double cross(pair<double,double> a, pair<double,double> b) {
+    return a.first*b.second-a.second*b.first;
+}
 
 int main() {
-    int n, m;
-    cin >> n >> m;
-    vector<Point> s(n);
-    for (auto& [x, y] : s) {
-        int a, b;
+    int N,M;
+    cin >> N >> M;
+    vector<pair<double,double>> ab;
+    for (int i=0;i<N;i++) {
+        double a,b;
         cin >> a >> b;
-        x = a, y = b;
+        ab.push_back(make_pair(a,b));
     }
-    vector<Point> t(m);
-    for (auto& [x, y] : t) {
-        int a, b;
-        cin >> a >> b;
-        x = a, y = b;
+    vector<pair<double,double>> cd;
+    for (int i=0;i<M;i++) {
+        double c,d;
+        cin >> c >> d;
+        cd.push_back(make_pair(c,d));
     }
-    for (int i = 0; i < m; ++i) {
-        const Point pivot = t[i];
-        const Point vect = t[i + 1 == m ? 0 : i + 1] - t[i];
-        const int len = s.size();
-        vector<Point> next;
-        for (int j = 0; j < len; ++j) {
-            const Point p = s[j], q = s[j + 1 == len ? 0 : j + 1];
-            const F p_c = cross(vect, p - pivot), q_c = cross(vect, q - pivot);
-            if (p_c + EPS > 0) {
-                next.push_back(p);
+    for (int i=0;i<M;i++) {
+        auto [c0,d0] = cd[i];
+        auto [c1,d1] = cd[(i+1)%M];
+        auto ccdd = make_pair(c1-c0,d1-d0);
+        vector<pair<double,double>> nexts;
+        for (int j=0;j<ab.size();j++) {
+            auto [a0,b0] = ab[j];
+            auto [a1,b1] = ab[(j+1)%ab.size()];
+            double v0 = cross(ccdd,make_pair(a0-c0,b0-d0));
+            double v1 = cross(ccdd,make_pair(a1-c0,b1-d0));
+            if (v0 + EPS > 0) {
+                nexts.push_back(ab[j]);
             }
-            if (((p_c > EPS) and (q_c < -EPS)) or ((p_c < -EPS) and (q_c > EPS))) {
-                next.push_back(p - (q - p) * (p_c / (q_c - p_c)));
+            if ((v0 > EPS && v1 < -EPS) || (v0 < -EPS && v1 > EPS)) {
+                nexts.push_back(make_pair(a0-(a1-a0)*v0/(v1-v0),b0-(b1-b0)*v0/(v1-v0)));
             }
         }
-        s = move(next);
+        ab = nexts;
     }
-    const int len = s.size();
-    F ans = 0;
-    for (int i = 0; i < len; ++i) {
-        ans = ans + cross(s[i], s[i + 1 == len ? 0 : i + 1]);
+    double ret = 0;
+    for (int i=0;i<ab.size();i++) {
+        ret += cross(ab[i],ab[(i+1)%ab.size()]);
     }
-    cout << fixed << setprecision(20);
-    cout << ans / 2 << '\n';
+    cout << fixed << setprecision(20) << ret/2 << endl;
 }
